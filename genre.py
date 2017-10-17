@@ -36,26 +36,45 @@ def genre_calc(persona, avg, code):
             score_index = idx
             genre = genres[score_index]
             #persona_list_high.append(genre)
-            persona_list_high.append(genre + " (" +str(score) + ")")
+            #persona_list_high.append(genre +','+str(score))
+            persona_list_high.append(str(score) + "," + genre)
         elif score < avg - 0.10:
             score_index = idx
             genre = genres[score_index]
             #persona_list_low.append(genre)
-            persona_list_low.append(genre + str(score))
+            #persona_list_low.append(genre + ','+str(score))
+            persona_list_low.append(str(score) + ',' + genre)
         else:
             score_index = idx
             genre = genres[score_index]
             #persona_list_avg.append(genre)
-            persona_list_avg.append(genre + str(score))
+            #persona_list_avg.append(genre + ','+str(score))
+            persona_list_avg.append(str(score) + ',' + genre)
     em_list = []
     if code == "H":
         return persona_list_high
     elif code == "A":
-        return em_list
+        #return em_list
         return persona_list_avg
     elif code == "L":
-        return em_list
+        #return em_list
         return persona_list_low
+
+
+def find_avg(in_list):
+    full_list = []
+    for i in in_list:
+        full_list = full_list + i.split(",")
+
+    myscore,mygenre = full_list[::2], full_list[1::2]
+    myscore = map(float , myscore)
+    mynumber = sum(myscore) / len(myscore)
+    result_num = min(myscore, key=lambda x:abs(x-mynumber))
+    result = myscore.index(result_num)
+    avg_genre = mygenre[result]
+    return avg_genre
+
+
 
     #print persona_list_high
     #print persona_list_avg
@@ -85,22 +104,52 @@ def get_genre(code):
     #     print aggr
       #print genre_calc(ope, ope_avg, code)
 
-    final_list = []
+    #final_list = []
+    top5_genre = []
     for i in range(len(persona_code)):
       mycode = aggr[i][0]
       mypersona = aggr[i][1]
       mypersona_avg = aggr[i][2]
       k = genre_calc(mypersona, mypersona_avg, mycode)
-      final_list = final_list + k
 
-    u_list = set(final_list)
-    result = []
-    for i in u_list:
-        result.append(i)
-    return result
+      # Here iam getting the list of genres based on single code
+      if mycode == 'H':
+        val = max(k)
+        val = val.split(",")
+        val = val[1]
+        top5_genre.append(val)
+
+      if mycode == 'A':
+        val = find_avg(k)
+        top5_genre.append(val)
+      if mycode == 'L':
+        val = min(k)
+        val = val.split(",")
+        val = val[1]
+        top5_genre.append(val)
+
+    top5_genre = list(set(top5_genre))
+    return top5_genre
 
 
-# #preparing genres for respective user types
+
+
+# TESTING
+
+k = get_genre("LAAAH")
+print k
+
+    #   final_list = final_list + k
+
+    # u_list = set(final_list)
+    # result = []
+    # for i in u_list:
+    #     result.append(i)
+    # return result
+
+
+
+#preparing genres for respective user types
 # workbook = xlsxwriter.Workbook('/home/py01/Desktop/hello.xlsx')
 # worksheet = workbook.add_worksheet()
 # user_type = code.final
