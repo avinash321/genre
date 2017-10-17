@@ -49,14 +49,16 @@ k22 = [''.join(p) for p in permutations('LAHAH')]
 
 k = k1+k2+k3+k4+k5+k6+k7+k8+k9+k11+k12+k13+k14+k15+k16+k17+k18+k19+k20+k21+k22
 m = set(k)
-final = []
+final = []	
 for i in m:
 	final.append(i)
 
 # print final       # Without sorting
-print 'USERS BASED ON PERSONALITY SCORES: "243" users'
-print sorted(final)
-print "TOTAL NUMBER OF USER TYPES:"+ str(len(final))
+
+if __name__ == "__main__":
+	print 'USERS BASED ON PERSONALITY SCORES: "243" users'
+	print sorted(final)
+	print "TOTAL NUMBER OF USER TYPES:"+ str(len(final))
 
 
 

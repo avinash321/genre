@@ -2,6 +2,9 @@
 It will take the input as  a personality code and 
 returns a list of generes recommended for that personality code.import 
 '''
+import code
+import xlsxwriter
+
 
 genres = ["action", "adventure", "animation", "cartoon", "comedy", "cult", "drama", "foreign", "horror", 
             "independent", "neo-noir", "parody", "romance", "science fiction", "tragedy", "war"]
@@ -32,65 +35,90 @@ def genre_calc(persona, avg, code):
         if score > avg + 0.10:
             score_index = idx
             genre = genres[score_index]
-            persona_list_high.append(genre)
+            #persona_list_high.append(genre)
+            persona_list_high.append(genre + " (" +str(score) + ")")
         elif score < avg - 0.10:
             score_index = idx
             genre = genres[score_index]
-            persona_list_low.append(genre)
+            #persona_list_low.append(genre)
+            persona_list_low.append(genre + str(score))
         else:
             score_index = idx
             genre = genres[score_index]
-            persona_list_avg.append(genre)
+            #persona_list_avg.append(genre)
+            persona_list_avg.append(genre + str(score))
     em_list = []
     if code == "H":
         return persona_list_high
     elif code == "A":
-        #return em_list
+        return em_list
         return persona_list_avg
     elif code == "L":
-        #return em_list
+        return em_list
         return persona_list_low
 
     #print persona_list_high
     #print persona_list_avg
     #print persona_list_low
-persona_code = "H"
+# persona_code = "H"
 
-print "Openness"
-print genre_calc(ope, ope_avg, persona_code)
-print "Consoentiouness"
-print genre_calc(con, con_avg, persona_code)
-print "Extroversion"
-print genre_calc(ext, ext_avg, persona_code)
-print "Agreeableness"
-print genre_calc(agr, agr_avg, persona_code)
-print "nurotisicisum"
-print genre_calc(nur, nur_avg, persona_code)
-
-
+# print "Openness"
+# print genre_calc(ope, ope_avg, persona_code)
+# print "Consoentiouness"
+# print genre_calc(con, con_avg, persona_code)
+# print "Extroversion"
+# print genre_calc(ext, ext_avg, persona_code)
+# print "Agreeableness"
+# print genre_calc(agr, agr_avg, persona_code)
+# print "nurotisicisum"
+# print genre_calc(nur, nur_avg, persona_code)
 
 
-# persona_code = "AAHLL"    # EACNO
-# personality = [ext, agr, con, nur, ope]
-# personality_avg = [ext_avg, agr_avg, con_avg, nur_avg, ope_avg]
+def get_genre(code):
 
-# aggr = zip(persona_code,personality,personality_avg)
-# # for i in aggr:
-# #     print aggr
-#   #print genre_calc(ope, ope_avg, code)
+    persona_code = code      #ex:  "LLHAA"    # EACNO
+    personality = [ext, agr, con, nur, ope]
+    personality_avg = [ext_avg, agr_avg, con_avg, nur_avg, ope_avg]
 
-# final_list = []
-# for i in range(len(persona_code)):
-#   mycode = aggr[i][0]
-#   mypersona = aggr[i][1]
-#   mypersona_avg = aggr[i][2]
-#   k = genre_calc(mypersona, mypersona_avg, mycode)
-#   final_list = final_list + k
+    aggr = zip(persona_code,personality,personality_avg)
+    # for i in aggr:
+    #     print aggr
+      #print genre_calc(ope, ope_avg, code)
 
-# m = set(final_list)
-# print m
-# print(len(m))
+    final_list = []
+    for i in range(len(persona_code)):
+      mycode = aggr[i][0]
+      mypersona = aggr[i][1]
+      mypersona_avg = aggr[i][2]
+      k = genre_calc(mypersona, mypersona_avg, mycode)
+      final_list = final_list + k
+
+    u_list = set(final_list)
+    result = []
+    for i in u_list:
+        result.append(i)
+    return result
+
+
+# #preparing genres for respective user types
+# workbook = xlsxwriter.Workbook('/home/py01/Desktop/hello.xlsx')
+# worksheet = workbook.add_worksheet()
+# user_type = code.final
+# for i in user_type:
+#     k1 = get_genre(i)
+#     k2 = ",".join(k1)
+#     print k2
+#     worksheet.write('A'+str(user_type.index(i)+1), k2)
+# workbook.close()
 
 
 
+# Preparing an excel Sheet with user types along with those genre types
+# user_type = code.final
+# workbook = xlsxwriter.Workbook('/home/py01/Desktop/hello.xlsx')
+# worksheet = workbook.add_worksheet()
+# for i in user_type:
+#     worksheet.write('A'+str(user_type.index(i)+1), i)
+
+# workbook.close()
 
