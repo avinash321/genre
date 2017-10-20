@@ -72,9 +72,8 @@ def find_avg(in_list):
     result_num = min(myscore, key=lambda x:abs(x-mynumber))
     result = myscore.index(result_num)
     avg_genre = mygenre[result]
+    #avg_genre = str(result_num) + ',' + avg_genre
     return avg_genre
-
-
 
     #print persona_list_high
     #print persona_list_avg
@@ -132,12 +131,10 @@ def get_genre(code):
     return top5_genre
 
 
-
-
 # TESTING
-
-k = get_genre("LAAAH")
-print k
+if __name__ == "__main__":
+    k = get_genre("LAAAH")
+    print k
 
     #   final_list = final_list + k
 
@@ -155,7 +152,7 @@ print k
 # user_type = code.final
 # for i in user_type:
 #     k1 = get_genre(i)
-#     k2 = ",".join(k1)
+#     k2 = "|".join(k1)
 #     print k2
 #     worksheet.write('A'+str(user_type.index(i)+1), k2)
 # workbook.close()
