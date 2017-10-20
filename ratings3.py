@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import genre
 import code
+import random
 #1. Connecting Mongo DB
 client = MongoClient('localhost', 27017)
 db = client.mydb			#Getting Database
@@ -51,22 +52,20 @@ def rate_caliculator(movie_id):
 					l = m.split(",")
 		l = l[::2]
 		l = map(float,l)
-		rating = None
 		if len(l)>0:
 			rating = sum(l)/len(l)
-			#print rating
-		return rating
+			return rating
 		l = []
 
-
+count = 0
 for user in user_types:
+	count = count + 1
+	movie_id_list = random.sample(movie_id_list, 8000)
  	for movie_id in movie_id_list:
  		rate = rate_caliculator(movie_id)
- 		print user,movie_id,rate
+ 		if rate is not None:
+ 			print count,movie_id,rate
+			test_col = db.test
+			test_col.insert_one({"userId":count, "movieId":movie_id, "rating":rate,"timestamp":"847117005"})
 
-
-
-
-
-
-
+# Preparing an excel Sheet with user types along with those genre types
