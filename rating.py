@@ -26,7 +26,6 @@ user_genre = []
 for mygenres in mygenres_cursor:
 		user_genre = mygenres['movieId']
 		user_genre = user_genre.split(',')
-
 		#print  user_genre
 		user_genre.append(mygenres['movieId'])
 # imdb_genre = {}

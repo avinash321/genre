@@ -3,9 +3,9 @@ import csv
 
 def csv_from_excel():
 
-	wb = xlrd.open_workbook('/home/py01/Desktop/experiment.xlsx')
+	wb = xlrd.open_workbook('/home/py01/Desktop/new_codes.xlsx')
 	sh = wb.sheet_by_name('Sheet1')
-	your_csv_file = open('/home/py01/Desktop/experiment.csv', 'wb')
+	your_csv_file = open('/home/py01/Desktop/mycode.csv', 'wb')
 	wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
 
 	for rownum in xrange(sh.nrows):

@@ -6,22 +6,27 @@ import code
 import xlsxwriter
 
 
+'''
+# This are list of genres from Empire Document
 genres = ["action", "adventure", "animation", "cartoon", "comedy", "cult", "drama", "foreign", "horror", 
             "independent", "neo-noir", "parody", "romance", "science fiction", "tragedy", "war"]
-
-ope = [3.87, 3.91, 4.04, 3.95, 3.88, 4.27, 3.99, 4.15, 3.90, 4.31, 4.34, 4.13, 3.84, 3.99, 4.40, 3.82]
+'''
+# This are modified genres based on IMDB
+genres = ["Action", "Adventure", "Animation", "Children", "Comedy", "Documentary", "Drama", "Western", "Horror", 
+            "Fantasy", "Film-Noir", "Musical", "Romance", "Sci-Fi", "Mystery", "War","Crime","Thriller"]
+ope = [3.87, 3.91, 4.04, 3.95, 3.88, 4.27, 3.99, 4.15, 3.90, 4.31, 4.34, 3.84, 3.84, 3.99, 4.40, 3.82, 3.87, 3.91 ]
 ope_avg  = sum(ope)/len(ope)
 
-con = [3.45, 3.56, 3.22, 3.33, 3.44, 3.10, 3.43, 3.46, 3.38, 3.59, 3.35, 3.36, 3.48, 3.55, 3.34, 3.51]
+con = [3.45, 3.56, 3.22, 3.33, 3.44, 3.10, 3.43, 3.46, 3.38, 3.59, 3.35, 3.48, 3.48, 3.55, 3.34, 3.51, 3.45, 3.56]
 con_avg = sum(con)/len(con)
 
-ext = [3.57 ,3.54 ,3.26 ,3.49 ,3.58 ,3.45 ,3.66 ,3.47 ,3.52 ,3.51 ,3.33 ,3.35 ,3.62 ,3.33 ,3.27 ,3.49 ]
+ext = [3.57 ,3.54 ,3.26 ,3.49 ,3.58 ,3.45 ,3.66 ,3.47 ,3.52 ,3.51 ,3.33 ,3.62 ,3.62 ,3.33 ,3.27 ,3.49, 3.57, 3.54]
 ext_avg  = sum(ext)/len(ext)
 
-agr = [3.58, 3.68, 3.35,3.57, 3.60, 3.40, 3.60, 3.54, 3.47, 3.55, 3.37, 3.28, 3.62, 3.57, 3.52, 3.50]
+agr = [3.58, 3.68, 3.35,3.57, 3.60, 3.40, 3.60, 3.54, 3.47, 3.55, 3.37, 3.62, 3.62, 3.57, 3.52, 3.50, 3.58, 3.68]
 agr_avg = sum(agr)/len(agr)
 
-nur = [2.72, 2.61, 3.02, 2.81, 2.75, 3.16, 2.86, 2.81, 2.91, 2.69, 2.97, 2.73, 2.85, 2.73, 3.11, 2.71]
+nur = [2.72, 2.61, 3.02, 2.81, 2.75, 3.16, 2.86, 2.81, 2.91, 2.69, 2.97, 2.85, 2.85, 2.73, 3.11, 2.71, 2.72,2.61]
 nur_avg = sum(nur)/len(nur)
 
 
@@ -72,7 +77,7 @@ def find_avg(in_list):
     result_num = min(myscore, key=lambda x:abs(x-mynumber))
     result = myscore.index(result_num)
     avg_genre = mygenre[result]
-    #avg_genre = str(result_num) + ',' + avg_genre
+    avg_genre = str(result_num) + ',' + avg_genre
     return avg_genre
 
     #print persona_list_high
@@ -92,6 +97,11 @@ def find_avg(in_list):
 # print genre_calc(nur, nur_avg, persona_code)
 
 
+def list_duplicates(seq):
+    seen = set()
+    seen_add = seen.add
+    return [idx for idx,item in enumerate(seq) if item in seen or seen_add(item)]
+
 def get_genre(code):
 
     persona_code = code      #ex:  "LLHAA"    # EACNO
@@ -110,12 +120,12 @@ def get_genre(code):
       mypersona = aggr[i][1]
       mypersona_avg = aggr[i][2]
       k = genre_calc(mypersona, mypersona_avg, mycode)
-
+      print k
       # Here iam getting the list of genres based on single code
       if mycode == 'H':
         val = max(k)
-        val = val.split(",")
-        val = val[1]
+        #val = val.split(",")
+        #val = val[1]
         top5_genre.append(val)
 
       if mycode == 'A':
@@ -123,17 +133,33 @@ def get_genre(code):
         top5_genre.append(val)
       if mycode == 'L':
         val = min(k)
-        val = val.split(",")
-        val = val[1]
+        #val = val.split(",")
+        #val = val[1]
         top5_genre.append(val)
 
     top5_genre = list(set(top5_genre))
+
+    # # Small logic to remove duplicates
+    # final_genre = []
+    # l =[]
+    # for i in top5_genre:
+    #     l = l + i.split(",")
+    # print l 
+    # l1 = l[::2]
+    # l2 = l[1::2]
+    # print l1
+    # print l2
+        
+    # print list_duplicates(l2)
+
     return top5_genre
+
+
 
 
 # TESTING
 if __name__ == "__main__":
-    k = get_genre("LAAAH")
+    k = get_genre("HAHAL")
     print k
 
     #   final_list = final_list + k
@@ -159,9 +185,10 @@ if __name__ == "__main__":
 
 
 
-# Preparing an excel Sheet with user types along with those genre types
+#Preparing an excel Sheet with user types along with those genre types
 # user_type = code.final
-# workbook = xlsxwriter.Workbook('/home/py01/Desktop/hello.xlsx')
+# workbook = xlsxw
+#riter.Workbook('/home/py01/Desktop/hello.xlsx')
 # worksheet = workbook.add_worksheet()
 # for i in user_type:
 #     worksheet.write('A'+str(user_type.index(i)+1), i)

@@ -21,7 +21,7 @@ for genre in movie_cursor:
 
 
 # THis will give list of genres with personality based ratings
-genre_collection = db.mygenres		# Getting Collection
+genre_collection = db.mygenres2		# Getting Collection
 mygenres_cursor = genre_collection.find()
 my_genre_list = []
 for mygenre in mygenres_cursor:
@@ -60,8 +60,8 @@ def rate_caliculator(movie_id):
 count = 0
 for user in user_types:
 	count = count + 1
-	movie_id_list = random.sample(movie_id_list, 8000)
- 	for movie_id in movie_id_list:
+	#movie_id_list = random.sample(movie_id_list, 10)
+ 	for movie_id in random.sample(movie_id_list, 500):
  		rate = rate_caliculator(movie_id)
  		if rate is not None:
  			print count,movie_id,rate
