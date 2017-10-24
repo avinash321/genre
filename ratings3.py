@@ -2,6 +2,10 @@ from pymongo import MongoClient
 import genre
 import code
 import random
+'''
+This will generate a csv file which contains userId, MovieId, rating 
+'''
+
 #1. Connecting Mongo DB
 client = MongoClient('localhost', 27017)
 db = client.mydb			#Getting Database
