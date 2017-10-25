@@ -166,7 +166,7 @@ def top5_user_genre(user_code):
         top5_genre.append(val)
 
       if mycode == 'L':
-        val = max(mygenre_list)
+        val = min(mygenre_list)
         top5_genre.append(val)
     # Removing Duplicate Items
     top5_genre = remove_duplicates(top5_genre)  
@@ -197,7 +197,7 @@ def get_csv_from_excel(path):
     '''
     wb = xlrd.open_workbook(path)
     sh = wb.sheet_by_name('Sheet1')
-    your_csv_file = open(path, 'wb')
+    your_csv_file = open('/home/py01/Desktop/user_genre.csv', 'wb')
     wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
     for rownum in xrange(sh.nrows):
         wr.writerow(sh.row_values(rownum))

@@ -11,8 +11,9 @@ from user_genre_xl import top5_user_genre, get_csv_from_excel
 import xlsxwriter
 import xlrd
 import csv
-import pandas
-import os
+from multiprocessing import Pool
+from multiprocessing import Process,Manager
+
 
 #Connecting Mongo DB
 client = MongoClient('localhost', 27017)
@@ -45,7 +46,7 @@ for cursor_obj in user_cursor:
     user_genre_list.append(cursor_obj['genres'])
 
 
-def movie_rating_calc(movie_id):
+def movie_rating_calc(movie_id, return_dict):
     '''
     Parameters:
         movie_id: It will take the movie_id as input
@@ -59,7 +60,9 @@ def movie_rating_calc(movie_id):
     Return:
         It will Returns the rating for the given movieId (movie)
     '''
-    imdb_movieId_cursor = db.imdb_genres.find( {"movieId":movie_id } )
+    client = MongoClient('localhost', 27017)
+    db1 = client.genre           #Getting Database (genre)
+    imdb_movieId_cursor = db1.imdb_genres.find( {"movieId":movie_id } )
     imdb_genre = None
     for cursor_obj in imdb_movieId_cursor:
         imdb_genre =  cursor_obj["genres"]
@@ -78,7 +81,8 @@ def movie_rating_calc(movie_id):
         temp_list = map(float, temp_list)
         if len(temp_list)>0:
           rating = sum(temp_list)/len(temp_list)
-          return rating
+          return_dict[movie_id] = rating,movie_id
+          #return rating
         temp_list = []
 
 
@@ -97,21 +101,30 @@ def make_lenskit_csv(path, rating_per_user):
     count = 2
     for user in users:
       userId = users.index(user) + 1
+      manager = Manager()
+      return_dict = manager.dict()
+      jobs = []
       for movie_id in random.sample(movie_id_list, rating_per_user):
-          rate = movie_rating_calc(movie_id)
-          if rate is not None:
-              print userId,movie_id,rate
-              worksheet.write('A'+str(count), int(userId))
-              worksheet.write('B'+str(count), int(movie_id))
-              worksheet.write('C'+str(count), rate)
-              count += 1
-              # Writing the results into MongoDB
-              #lenskit = db.lenskit.find()
-              #db.lenskit.insert_one({"userId":userId, "movieId":movie_id, "rating":rate})
-    workbook.close()
-    # CSV File Creation
-    xl2csv(path)
-    print "ratings.csv file generated successfully on Desktop"
+        p = Process(target=movie_rating_calc, args=(movie_id,return_dict))
+        jobs.append(p)
+        p.start()
+      for proc in jobs:
+        proc.join()
+      print return_dict.values()
+
+          #rate = movie_rating_calc(movie_id)
+    #       if rate is not None:
+    #           print userId,movie_id,rate
+    #           worksheet.write('A'+str(count), userId)
+    #           worksheet.write('B'+str(count), movie_id)
+    #           worksheet.write('C'+str(count), rate)
+    #           count += 1
+    #           # Writing the results into MongoDB
+    #           #lenskit = db.lenskit.find()
+    #           #db.lenskit.insert_one({"userId":userId, "movieId":movie_id, "rating":rate})
+    # workbook.close()
+    # get_csv_from_excel(path)
+    # print "ratings.csv file generated successfully on Desktop"
 
 def get_user_rating_xl(path):
     ''''
@@ -132,17 +145,9 @@ def get_user_rating_xl(path):
 
 def clean_data():
     db.user_genres.delete_many({})
-
-
-def xl2csv(path):
-    df = pandas.read_excel(path)
-    csvfileloc = '/home/py01/Desktop/ratings5.csv'
-    df.to_csv(csvfileloc, sep='\t', encoding='utf-8', index=False)
-    os.remove(path)
-
     
 if __name__ == "__main__":
-    ratings_per_user = 2
-    path = '/home/py01/Desktop/ratings' + str(ratings_per_user)+'.xlsx'
+    ratings_per_user = 501
+    path = '/home/py01/Desktop/ratings' + str(ratings_per_user)+'.csv'
     make_lenskit_csv(path ,ratings_per_user)
     clean_data()
