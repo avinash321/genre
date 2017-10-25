@@ -1,12 +1,15 @@
 '''
 It will take the input as  a personality code and 
 returns a list of generes recommended for that personality code
+(i.e User-Genre CSV File)
 
 Source : This caliculatons are made based on Empoire Docujment
 http://ceur-ws.org/Vol-997/empire2013_paper_2.pdf
 '''
 from user_codes import users
 import xlsxwriter
+import xlrd
+import csv
 
 # This are list of genres from Empire Document
 genres = ["action", "adventure", "animation", "cartoon", "comedy", "cult", "drama", "foreign", "horror", 
@@ -159,10 +162,11 @@ def top5_user_genre(user_code):
 
       if mycode == 'A':
         val = avg_genre(mygenre_list)
+        #val = max(mygenre_list)
         top5_genre.append(val)
 
       if mycode == 'L':
-        val = min(mygenre_list)
+        val = max(mygenre_list)
         top5_genre.append(val)
     # Removing Duplicate Items
     top5_genre = remove_duplicates(top5_genre)  
@@ -172,21 +176,41 @@ def top5_user_genre(user_code):
 
 
 def get_user_genres_xl(path):
-    #preparing genres for respective user types
+    ''''
+        It will prepares an excelsheet of  genres for respective user types
+    '''
     workbook = xlsxwriter.Workbook(path)
     worksheet = workbook.add_worksheet()
+    worksheet.write('A1', "userId")
+    worksheet.write('B1', "genres")
     user_type = users
     for user in user_type:
         genre_list = top5_user_genre(user)
         user_genre = "|".join(genre_list)
-        worksheet.write('A'+str(user_type.index(user)+1), user)
-        worksheet.write('B'+str(user_type.index(user)+1), user_genre)
+        worksheet.write('A'+str(user_type.index(user)+2), user)
+        worksheet.write('B'+str(user_type.index(user)+2), user_genre)
     workbook.close()
+
+def get_csv_from_excel(path):
+    '''
+        It will converts the given xl file into CSV Format
+    '''
+    wb = xlrd.open_workbook(path)
+    sh = wb.sheet_by_name('Sheet1')
+    your_csv_file = open(path, 'wb')
+    wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+    for rownum in xrange(sh.nrows):
+        wr.writerow(sh.row_values(rownum))
+    your_csv_file.close()
 
 
 if __name__ == "__main__":
-    get_user_genres_xl('/home/py01/Desktop/user_genre.xlsx')
-    print "User_Genre Xl Sheet Generated Successfully"
+    path = '/home/py01/Desktop/user_genre.csv'
+    # Generating an excel sheet
+    get_user_genres_xl(path)
+    # Converting it into CSV Format
+    get_csv_from_excel(path)
+    print "CSV File Created Successfully"
     #mygenre = top5_user_genre("LLLHA")
     #print mygenre
 
